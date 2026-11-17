@@ -10,6 +10,8 @@
 # Options:
 #   --repo owner/name   repository to publish to (default: the `iba` remote,
 #                       falling back to iba2222/spotiffuyyyy)
+#   --remote NAME       git remote holding docs/source.json (default: whichever
+#                       remote points at --repo, else `origin`)
 #   --tag TAG           release tag (default: v<tweak version>-<spotify version>)
 #   --notes TEXT        release notes text
 #   --no-commit         upload only; leave docs/source.json untouched
@@ -27,6 +29,7 @@ cd "$REPO_DIR"
 
 IPA=""
 REPO=""
+REMOTE=""
 TAG=""
 NOTES=""
 COMMIT=1
@@ -40,6 +43,7 @@ usage() { sed -n '2,20p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; }
 while [ $# -gt 0 ]; do
     case "$1" in
         --repo)      REPO="${2:-}"; shift 2 ;;
+        --remote)    REMOTE="${2:-}"; shift 2 ;;
         --tag)       TAG="${2:-}"; shift 2 ;;
         --notes)     NOTES="${2:-}"; shift 2 ;;
         --no-commit) COMMIT=0; shift ;;
@@ -62,6 +66,17 @@ fi
 
 TOKEN="${GH_TOKEN:-${GITHUB_TOKEN:-}}"
 [ -n "$TOKEN" ] || die "set GH_TOKEN (a token with Contents: read and write) and run again"
+
+# The commit that refreshes docs/source.json has to land on the remote this
+# repository lives on, not whatever `origin` happens to be.
+if [ -z "$REMOTE" ]; then
+    for candidate in $(git remote); do
+        case "$(git remote get-url "$candidate" 2>/dev/null)" in
+            *"$REPO"*) REMOTE="$candidate"; break ;;
+        esac
+    done
+    [ -n "$REMOTE" ] || REMOTE="origin"
+fi
 
 BASE_NAME=$(basename "$IPA" .ipa)
 # Iayxify-6.7.0-9.1.0[-anything].ipa -> 6.7.0 / 9.1.0
@@ -96,12 +111,13 @@ else
     RELEASE_JSON=$(curl -sS --max-time 60 -X POST "${AUTH[@]}" \
         -H "Content-Type: application/json" \
         "${API}/releases" \
-        -d "{\"tag_name\":\"${TAG}\",\"name\":\"Iayxify ${TWEAK_VERSION} — Spotify ${SPOT_VERSION}\",\"body\":\"$(json_escape "$NOTES")\",\"draft\":false,\"prerelease\":false}")
+        -d "{\"tag_name\":\"${TAG}\",\"name\":\"Iayxify ${TWEAK_VERSION} - Spotify ${SPOT_VERSION}\",\"body\":\"$(json_escape "$NOTES")\",\"draft\":false,\"prerelease\":false}")
     printf '%s' "$RELEASE_JSON" | grep -q '"tag_name"' \
         || die "could not create release: ${RELEASE_JSON}"
 fi
 
-RELEASE_ID=$(printf '%s' "$RELEASE_JSON" | grep -o '"id":[0-9]*' | head -1 | cut -d: -f2)
+# The API pretty-prints its JSON, so the colon is followed by a space.
+RELEASE_ID=$(printf '%s' "$RELEASE_JSON" | grep -o '"id": *[0-9]\+' | head -1 | tr -cd '0-9')
 [ -n "$RELEASE_ID" ] || die "could not read release id from: ${RELEASE_JSON}"
 
 # ── 2. Upload the IPA ────────────────────────────────────────────────────────
@@ -187,7 +203,7 @@ EOF
 
         BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
         if [ "$PUSH" -eq 1 ] && [ -n "$BRANCH" ] && [ "$BRANCH" != "HEAD" ]; then
-            git push origin "HEAD:${BRANCH}" || say "push failed — push manually to update the install page"
+            git push "$REMOTE" "HEAD:${BRANCH}" || say "push failed — push manually to update the install page"
         else
             say "Left the commit local (push it to update the SideStore source)"
         fi
