@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Iayxify — install</title>
+<style>
+  :root {
+    --bg: #0b0b0c;
+    --panel: #141416;
+    --line: #26262a;
+    --text: #f4f4f5;
+    --muted: #a1a1aa;
+    --green: #1ed760;
+    --green-ink: #06210f;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 640px; margin: 0 auto; padding: 40px 20px 64px; }
+  header { text-align: center; margin-bottom: 28px; }
+  .icon {
+    width: 96px; height: 96px;
+    border-radius: 22px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    display: block; margin: 0 auto 16px;
+  }
+  h1 { margin: 0; font-size: 30px; letter-spacing: -0.02em; }
+  .sub { margin: 8px 0 0; color: var(--muted); font-size: 14px; }
+  .button {
+    display: block;
+    background: var(--green);
+    color: var(--green-ink);
+    text-align: center;
+    text-decoration: none;
+    font-weight: 700;
+    padding: 16px 20px;
+    border-radius: 999px;
+    margin-top: 8px;
+  }
+  .button.secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--line);
+    font-weight: 600;
+    margin-top: 12px;
+  }
+  .status { text-align: center; color: var(--muted); font-size: 13px; min-height: 20px; margin: 12px 0 0; }
+  section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 20px;
+    margin-top: 24px;
+  }
+  h2 { margin: 0 0 12px; font-size: 17px; }
+  ol { margin: 0; padding-left: 20px; color: var(--muted); }
+  ol li { margin-bottom: 8px; }
+  ol li:last-child { margin-bottom: 0; }
+  code, .source-url {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12px;
+    word-break: break-all;
+  }
+  .source {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: #0f0f11;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin: 12px 0;
+  }
+  .source code { flex: 1; color: var(--green); }
+  .source button {
+    background: var(--line);
+    color: var(--text);
+    border: 0;
+    border-radius: 8px;
+    padding: 7px 12px;
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .note { border-color: #3a2d12; background: #191408; }
+  .note p { margin: 0; color: #d8c79a; font-size: 14px; }
+  footer { margin-top: 32px; text-align: center; color: var(--muted); font-size: 13px; }
+  a { color: var(--green); }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <img class="icon" src="icon.png" alt="Iayxify icon">
+    <h1>Iayxify</h1>
+    <p class="sub">Spotify 9.1.0 · tweak 6.7.0 · iOS 15 or newer</p>
+  </header>
+
+  <a id="download" class="button" href="https://github.com/iba2222/spotiffuyyyy/releases">Download IPA</a>
+  <p id="status" class="status">Checking for the newest build…</p>
+
+  <section>
+    <h2>Install from your phone — SideStore / AltStore</h2>
+    <ol>
+      <li>Install SideStore (or AltStore) on the device and get it signed in with your Apple ID.</li>
+      <li>Open <strong>Sources → +</strong> and paste the address below.</li>
+      <li>Tap <strong>Iayxify → Install</strong>. SideStore signs the build with your account on the device.</li>
+    </ol>
+    <div class="source">
+      <code id="source-url">https://iba2222.github.io/spotiffuyyyy/source.json</code>
+      <button id="copy" type="button">Copy</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>Install from a computer — Sideloadly</h2>
+    <ol>
+      <li>Download the IPA above and install <a href="https://sideloadly.io">Sideloadly</a> (Windows or macOS).</li>
+      <li>Connect the iPhone by USB and drag the IPA into Sideloadly.</li>
+      <li>Enter your Apple ID, start, then trust the developer certificate in <strong>Settings → General → VPN &amp; Device Management</strong>.</li>
+    </ol>
+  </section>
+
+  <section class="note">
+    <p>The IPA in Releases is an unsigned build of patched Spotify. iOS will only run it after it has been signed with your own Apple ID — SideStore/AltStore do that on the device, Sideloadly does it on your computer.</p>
+  </section>
+
+  <footer>
+    Builds and source: <a href="https://github.com/iba2222/spotiffuyyyy">github.com/iba2222/spotiffuyyyy</a>
+  </footer>
+</main>
+<script>
+  var REPO = "iba2222/spotiffuyyyy";
+  var download = document.getElementById("download");
+  var status = document.getElementById("status");
+
+  fetch("https://api.github.com/repos/" + REPO + "/releases/latest", {
+    headers: { Accept: "application/vnd.github+json" }
+  })
+    .then(function (response) {
+      if (!response.ok) throw new Error("HTTP " + response.status);
+      return response.json();
+    })
+    .then(function (release) {
+      var ipa = (release.assets || []).filter(function (asset) {
+        return /\.ipa$/i.test(asset.name);
+      })[0];
+      if (!ipa) throw new Error("no IPA asset");
+      download.href = ipa.browser_download_url;
+      download.textContent = "Download IPA · " + ipa.name;
+      status.textContent =
+        Math.round(ipa.size / 1048576) +
+        " MB · published " +
+        new Date(release.published_at).toLocaleDateString();
+    })
+    .catch(function () {
+      status.textContent =
+        "No build published yet — run the Build IPA (PATCHED) workflow with upload method “release”.";
+    });
+
+  document.getElementById("copy").addEventListener("click", function () {
+    var text = document.getElementById("source-url").textContent.trim();
+    var button = this;
+    var done = function () {
+      button.textContent = "Copied";
+      setTimeout(function () { button.textContent = "Copy"; }, 1500);
+    };
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(done, done);
+    } else {
+      window.prompt("Copy this address:", text);
+    }
+  });
+</script>
+</body>
+</html>

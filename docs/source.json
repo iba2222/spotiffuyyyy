@@ -1,0 +1,41 @@
+{
+  "name": "Iayxify",
+  "identifier": "com.iayxify.source",
+  "subtitle": "Spotify with Premium unlocked",
+  "description": "IPA builds of Iayxify, a Spotify tweak. Every build is unsigned; SideStore or AltStore sign it with your own Apple ID when you install it.",
+  "iconURL": "https://iba2222.github.io/spotiffuyyyy/icon.png",
+  "headerURL": "https://iba2222.github.io/spotiffuyyyy/icon.png",
+  "website": "https://iba2222.github.io/spotiffuyyyy/",
+  "tintColor": "#1ED760",
+  "featuredApps": [
+    "com.spotify.client"
+  ],
+  "apps": [
+    {
+      "name": "Iayxify",
+      "bundleIdentifier": "com.spotify.client",
+      "developerName": "iayxify",
+      "subtitle": "Spotify with Premium unlocked",
+      "localizedDescription": "Spotify 9.1.0 with the Iayxify tweak (6.7.0) injected: Premium features unlocked, theming, and the usual lyric and download extras. Installing replaces the Spotify app on the device.",
+      "iconURL": "https://iba2222.github.io/spotiffuyyyy/icon.png",
+      "tintColor": "#1ED760",
+      "category": "utilities",
+      "versions": [
+        {
+          "version": "6.7.0",
+          "buildVersion": "9.1.0",
+          "date": "2026-10-19T00:00:00Z",
+          "downloadURL": "https://github.com/iba2222/spotiffuyyyy/releases/latest/download/Iayxify-6.7.0-9.1.0.ipa",
+          "localizedDescription": "Iayxify 6.7.0 on Spotify 9.1.0.",
+          "size": 98192607,
+          "minOSVersion": "15.0"
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    }
+  ],
+  "news": []
+}
